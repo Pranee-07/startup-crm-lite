@@ -10,6 +10,7 @@ import {
 } from 'recharts';
 // Import sleek icons from lucide-react to represent stats and headers
 import { Users, TrendingUp, DollarSign, Clock } from 'lucide-react';
+import { useLeads } from '../context/LeadContext';
 
 // Import our custom modular dashboard components
 import StatsCard from '../components/dashboard/StatsCard';
@@ -27,97 +28,7 @@ const monthlyPerformanceData = [
   { name: 'Jun', Leads: 780, Conversions: 248 },
 ];
 
-// Mock leads list with dates and stage info
-const sampleLeads = [
-  {
-    id: 1,
-    company: 'Apex Corp Solutions',
-    contactName: 'Marcus Vance',
-    stage: 'Negotiation',
-    value: '$38,200',
-    dateAdded: '2026-06-15T14:30:00Z',
-    email: 'marcus@apex.io',
-    phone: '+1 (555) 234-5678',
-    owner: 'Sarah J.',
-  },
-  {
-    id: 2,
-    company: 'Siren Systems Ltd',
-    contactName: 'Nadia Thorne',
-    stage: 'Contacted',
-    value: '$24,500',
-    dateAdded: '2026-06-14T09:15:00Z',
-    email: 'nadia@siren.co',
-    phone: '+1 (555) 876-5432',
-    owner: 'David K.',
-  },
-  {
-    id: 3,
-    company: 'Vortex Labs Inc',
-    contactName: 'Julian Foster',
-    stage: 'New',
-    value: '$19,000',
-    dateAdded: '2026-06-16T10:00:00Z',
-    email: 'julian@vortex.net',
-    phone: '+1 (555) 987-6543',
-    owner: 'Sarah J.',
-  },
-  {
-    id: 4,
-    company: 'Horizon Ventures',
-    contactName: 'Elena Rostova',
-    stage: 'Proposal',
-    value: '$52,000',
-    dateAdded: '2026-06-13T16:45:00Z',
-    email: 'elena@horizon.vc',
-    phone: '+1 (555) 432-1098',
-    owner: 'Marcus L.',
-  },
-  {
-    id: 5,
-    company: 'Stellar Tech Corp',
-    contactName: 'Kenji Sato',
-    stage: 'Won',
-    value: '$125,000',
-    dateAdded: '2026-06-10T11:00:00Z',
-    email: 'kenji@stellar.tech',
-    phone: '+1 (555) 543-2109',
-    owner: 'David K.',
-  },
-  {
-    id: 6,
-    company: 'Alpha Builders',
-    contactName: 'Robert Miller',
-    stage: 'Lost',
-    value: '$45,000',
-    dateAdded: '2026-06-11T13:20:00Z',
-    email: 'robert@alphabuild.com',
-    phone: '+1 (555) 654-3210',
-    owner: 'Marcus L.',
-  },
-  {
-    id: 7,
-    company: 'Quantum Dynamics',
-    contactName: 'Chloe Henderson',
-    stage: 'Proposal',
-    value: '$68,000',
-    dateAdded: '2026-06-16T08:30:00Z',
-    email: 'chloe@quantum.dyn',
-    phone: '+1 (555) 345-6789',
-    owner: 'Sarah J.',
-  },
-  {
-    id: 8,
-    company: 'Nova Marketing',
-    contactName: "Liam O'Connor",
-    stage: 'New',
-    value: '$15,500',
-    dateAdded: '2026-06-16T09:45:00Z',
-    email: 'liam@novamktg.com',
-    phone: '+1 (555) 765-4321',
-    owner: 'Marcus L.',
-  },
-];
+
 
 /**
  * Dashboard page assembling stats, pipeline summary, recent lead list,
@@ -127,28 +38,28 @@ const sampleLeads = [
  * @returns {React.JSX.Element} The rendered Dashboard page.
  */
 const Dashboard = () => {
-  /**
-   * Action handler for adding a new lead placeholder
-   */
+  // ── Pull live leads from global context ─────────────────────────────────
+  const { leads } = useLeads();
+
   const handleAddNewLead = () => {
     alert('Add Lead form modal trigger. (Feature integration coming in Phase 8)');
   };
 
   /**
-   * Action handler to compile and export lead records to CSV format
+   * Action handler to compile and export all lead records to CSV format.
+   * Uses the live leads array from LeadContext.
    */
   const handleExportData = () => {
     try {
-      const headers = ['Company', 'Contact Name', 'Stage', 'Value', 'Date Added', 'Email', 'Phone', 'Owner'];
-      const rows = sampleLeads.map((lead) => [
+      const headers = ['Company', 'Name', 'Status', 'Source', 'Created At', 'Email', 'Phone'];
+      const rows = leads.map((lead) => [
         `"${lead.company}"`,
-        `"${lead.contactName}"`,
-        `"${lead.stage}"`,
-        `"${lead.value}"`,
-        `"${lead.dateAdded}"`,
+        `"${lead.name}"`,
+        `"${lead.status}"`,
+        `"${lead.source}"`,
+        `"${lead.createdAt}"`,
         `"${lead.email}"`,
         `"${lead.phone}"`,
-        `"${lead.owner}"`,
       ]);
 
       const csvContent =
@@ -216,7 +127,7 @@ const Dashboard = () => {
       {/* Middle Grid: Pipeline bar overview and Quick Actions */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <PipelineOverview leads={sampleLeads} />
+          <PipelineOverview leads={leads} />
         </div>
         <div className="lg:col-span-1">
           <QuickActions onAddLead={handleAddNewLead} onExport={handleExportData} />
@@ -281,7 +192,7 @@ const Dashboard = () => {
 
         {/* Recent Leads list container (Takes up 1 column out of 3 on desktop) */}
         <div className="lg:col-span-1">
-          <RecentLeads leads={sampleLeads} />
+          <RecentLeads leads={leads} />
         </div>
       </div>
     </div>
