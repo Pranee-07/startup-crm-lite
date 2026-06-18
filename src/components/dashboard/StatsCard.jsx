@@ -37,13 +37,13 @@ const StatsCard = ({ title, value, icon: Icon, change, color = 'primary' }) => {
   const activeColorClass = colorMap[color] || colorMap.primary;
 
   return (
-    <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-md hover:border-slate-700 hover:shadow-lg transition-all duration-300 group hover:-translate-y-1 flex flex-col justify-between">
+    <div className="p-6 rounded-2xl bg-slate-900 light:bg-white border border-slate-800 light:border-slate-200 shadow-md hover:border-slate-700 light:hover:border-slate-350 hover:shadow-lg transition-all duration-300 group hover:-translate-y-1 flex flex-col justify-between">
       <div className="flex justify-between items-start">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 light:text-slate-400">
             {title}
           </p>
-          <h3 className="text-2xl font-bold mt-2 text-white group-hover:text-primary transition-colors">
+          <h3 className="text-2xl font-bold mt-2 text-white light:text-black group-hover:text-primary transition-colors">
             {value}
           </h3>
         </div>
@@ -72,7 +72,7 @@ const StatsCard = ({ title, value, icon: Icon, change, color = 'primary' }) => {
             {change}%
           </span>
         </div>
-        <span className="text-[10px] text-slate-500 font-medium">vs last month</span>
+        <span className="text-[10px] text-slate-500 light:text-slate-400 font-medium">vs last month</span>
       </div>
     </div>
   );

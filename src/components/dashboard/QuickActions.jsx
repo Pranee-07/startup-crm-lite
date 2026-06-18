@@ -26,10 +26,10 @@ const QuickActions = ({ onAddLead, onExport }) => {
   };
 
   return (
-    <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-md flex flex-col justify-between h-full">
+    <div className="p-6 rounded-2xl bg-slate-900 light:bg-white border border-slate-800 light:border-slate-200 shadow-md flex flex-col justify-between h-full transition-colors duration-200">
       <div>
-        <h4 className="text-base font-bold text-white tracking-wide">Quick Actions</h4>
-        <p className="text-xs text-slate-500 mt-1">
+        <h4 className="text-base font-bold text-white light:text-black tracking-wide">Quick Actions</h4>
+        <p className="text-xs text-slate-500 light:text-slate-400 mt-1">
           Perform administrative pipeline routines instantly
         </p>
       </div>
@@ -47,18 +47,18 @@ const QuickActions = ({ onAddLead, onExport }) => {
         {/* View All Leads Page Route redirection Link */}
         <Link
           to="/leads"
-          className="w-full flex items-center justify-center gap-2 py-3 px-4 text-xs font-semibold bg-slate-950 hover:bg-slate-850 text-slate-300 border border-slate-850 hover:border-slate-700 rounded-xl transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer text-center"
+          className="w-full flex items-center justify-center gap-2 py-3 px-4 text-xs font-semibold bg-slate-950 light:bg-slate-50 hover:bg-slate-850 light:hover:bg-slate-100 text-slate-300 light:text-black border border-slate-850 light:border-slate-200 hover:border-slate-700 light:hover:border-slate-350 rounded-xl transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer text-center"
         >
-          <Users className="w-4 h-4 shrink-0 text-slate-400" />
+          <Users className="w-4 h-4 shrink-0 text-slate-400 light:text-slate-500" />
           <span>View All Leads</span>
         </Link>
 
         {/* Export Data Action CTA */}
         <button
           onClick={onExport || (() => handleFallbackClick('Export Data'))}
-          className="w-full flex items-center justify-center gap-2 py-3 px-4 text-xs font-semibold bg-slate-950 hover:bg-slate-850 text-slate-300 border border-slate-850 hover:border-slate-700 rounded-xl transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer text-center"
+          className="w-full flex items-center justify-center gap-2 py-3 px-4 text-xs font-semibold bg-slate-950 light:bg-slate-50 hover:bg-slate-850 light:hover:bg-slate-100 text-slate-300 light:text-black border border-slate-850 light:border-slate-200 hover:border-slate-700 light:hover:border-slate-350 rounded-xl transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer text-center"
         >
-          <Download className="w-4 h-4 shrink-0 text-slate-400" />
+          <Download className="w-4 h-4 shrink-0 text-slate-400 light:text-slate-500" />
           <span>Export Data</span>
         </button>
       </div>

@@ -25,38 +25,38 @@ const EmptyState = ({ totalLeads, searchQuery, activeFilter, onClearFilters }) =
     return (
       <div className="flex flex-col items-center justify-center py-16 px-8 text-center animate-in fade-in duration-300">
         {/* Icon bubble */}
-        <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-slate-900 border border-slate-800 mb-5 shadow-inner">
-          <SearchX className="w-7 h-7 text-slate-500" />
+        <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-slate-900 light:bg-slate-100 border border-slate-800 light:border-slate-200 mb-5 shadow-inner">
+          <SearchX className="w-7 h-7 text-slate-500 light:text-slate-400" />
         </div>
 
         {/* Headline */}
-        <h3 className="text-base font-bold text-slate-200 mb-2">No leads found</h3>
+        <h3 className="text-base font-bold text-slate-200 light:text-slate-800 mb-2">No leads found</h3>
 
         {/* Context-aware subtitle */}
-        <p className="text-xs text-slate-500 max-w-xs leading-relaxed mb-1">
+        <p className="text-xs text-slate-500 light:text-slate-600 max-w-xs leading-relaxed mb-1">
           {hasSearch && hasFilter && (
             <>
               No results for{' '}
-              <span className="text-slate-300 font-medium">"{searchQuery}"</span> in the{' '}
-              <span className="text-blue-400 font-medium">{activeFilter}</span> filter.
+              <span className="text-slate-300 light:text-slate-700 font-medium">"{searchQuery}"</span> in the{' '}
+              <span className="text-blue-400 light:text-blue-600 font-medium">{activeFilter}</span> filter.
             </>
           )}
           {hasSearch && !hasFilter && (
             <>
               No leads match{' '}
-              <span className="text-slate-300 font-medium">"{searchQuery}"</span>.
+              <span className="text-slate-300 light:text-slate-700 font-medium">"{searchQuery}"</span>.
             </>
           )}
           {!hasSearch && hasFilter && (
             <>
               No leads with status{' '}
-              <span className="text-blue-400 font-medium">{activeFilter}</span>.
+              <span className="text-blue-400 light:text-blue-600 font-medium">{activeFilter}</span>.
             </>
           )}
           {!hasSearch && !hasFilter && 'No leads match your current filters.'}
         </p>
 
-        <p className="text-xs text-slate-600 mb-6">
+        <p className="text-xs text-slate-600 light:text-slate-500 mb-6">
           Try adjusting your search terms or clearing the active filters.
         </p>
 
@@ -83,17 +83,17 @@ const EmptyState = ({ totalLeads, searchQuery, activeFilter, onClearFilters }) =
   return (
     <div className="flex flex-col items-center justify-center py-16 px-8 text-center animate-in fade-in duration-300">
       {/* Icon bubble */}
-      <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-slate-900 border border-slate-800 mb-5 shadow-inner">
-        <Inbox className="w-7 h-7 text-slate-500" />
+      <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-slate-900 light:bg-slate-100 border border-slate-800 light:border-slate-200 mb-5 shadow-inner">
+        <Inbox className="w-7 h-7 text-slate-500 light:text-slate-400" />
       </div>
 
       {/* Headline */}
-      <h3 className="text-base font-bold text-slate-200 mb-2">No leads yet</h3>
+      <h3 className="text-base font-bold text-slate-200 light:text-slate-800 mb-2">No leads yet</h3>
 
       {/* Subtitle */}
-      <p className="text-xs text-slate-500 max-w-xs leading-relaxed">
+      <p className="text-xs text-slate-500 light:text-slate-600 max-w-xs leading-relaxed">
         Get started by adding your first lead. Click{' '}
-        <span className="text-blue-400 font-medium">Add Lead</span> above to create one.
+        <span className="text-blue-400 light:text-blue-600 font-medium">Add Lead</span> above to create one.
       </p>
     </div>
   );

@@ -54,7 +54,7 @@ const SearchBar = ({ value, onChange }) => {
       <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none z-10">
         <Search
           className={`w-4 h-4 transition-colors duration-200 ${
-            inputValue ? 'text-blue-400' : 'text-slate-500'
+            inputValue ? 'text-blue-400' : 'text-slate-500 light:text-slate-400'
           }`}
         />
       </span>
@@ -68,11 +68,11 @@ const SearchBar = ({ value, onChange }) => {
         aria-label="Search leads by name, company, or email"
         className="
           w-full pl-9 pr-9 py-2.5 text-xs
-          bg-slate-950 border border-slate-800 rounded-xl
+          bg-slate-950 light:bg-white border border-slate-800 light:border-slate-200 rounded-xl
           focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500
-          text-slate-200 placeholder-slate-500
+          text-slate-200 light:text-slate-900 placeholder-slate-500 light:placeholder-slate-400
           transition-all duration-200
-          hover:border-slate-700
+          hover:border-slate-700 light:hover:border-slate-300
         "
       />
 
@@ -83,9 +83,10 @@ const SearchBar = ({ value, onChange }) => {
           aria-label="Clear search"
           className="
             absolute inset-y-0 right-0 flex items-center pr-3
-            text-slate-500 hover:text-slate-200
+            text-slate-500 hover:text-slate-200 light:hover:text-slate-700
             transition-colors duration-150
             focus:outline-none
+            cursor-pointer
           "
         >
           <X className="w-3.5 h-3.5" />

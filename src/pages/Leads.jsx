@@ -144,7 +144,7 @@ const Leads = () => {
   return (
     <div className="flex flex-col gap-6">
       {/* ── Control Navigation Header Bar ───────────────────────────────────── */}
-      <div className="flex flex-col gap-4 p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-md">
+      <div className="flex flex-col gap-4 p-5 rounded-2xl bg-slate-900 light:bg-white border border-slate-800 light:border-slate-200 shadow-md transition-colors duration-200">
 
         {/* Row 1: Search + View Toggle + Add Lead button */}
         <div className="flex flex-col xl:flex-row gap-4 xl:items-center xl:justify-between">
@@ -154,13 +154,12 @@ const Leads = () => {
 
           {/* Right Side Controls */}
           <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto justify-end">
-
-            {/* View Toggler button icons */}
-            <div className="flex items-center bg-slate-950 border border-slate-800 rounded-xl p-1 shrink-0">
+            {/* View Toggler button icons - only visible on tablet (md:flex lg:hidden) */}
+            <div className="hidden md:flex lg:hidden items-center bg-slate-950 light:bg-slate-100 border border-slate-800 light:border-slate-200 rounded-xl p-1 shrink-0 transition-colors duration-200">
               <button
                 onClick={() => setViewMode('table')}
-                className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-                  viewMode === 'table' ? 'bg-slate-800 text-primary' : 'text-slate-400 hover:text-slate-200'
+                className={`w-11 h-11 flex items-center justify-center rounded-lg transition-colors cursor-pointer ${
+                  viewMode === 'table' ? 'bg-slate-800 light:bg-white text-primary shadow-sm' : 'text-slate-400 light:text-slate-500 hover:text-slate-200 light:hover:text-slate-700'
                 }`}
                 title="Table View"
                 aria-label="Toggle Table View"
@@ -169,8 +168,8 @@ const Leads = () => {
               </button>
               <button
                 onClick={() => setViewMode('cards')}
-                className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-                  viewMode === 'cards' ? 'bg-slate-800 text-primary' : 'text-slate-400 hover:text-slate-200'
+                className={`w-11 h-11 flex items-center justify-center rounded-lg transition-colors cursor-pointer ${
+                  viewMode === 'cards' ? 'bg-slate-800 light:bg-white text-primary shadow-sm' : 'text-slate-400 light:text-slate-500 hover:text-slate-200 light:hover:text-slate-700'
                 }`}
                 title="Grid Cards View"
                 aria-label="Toggle Grid Cards View"
@@ -180,14 +179,14 @@ const Leads = () => {
             </div>
 
             {/* Quick Counter label */}
-            <span className="text-xs text-slate-500 whitespace-nowrap bg-slate-950 px-3.5 py-2.5 border border-slate-800 rounded-xl">
-              Found: <strong className="text-slate-300 font-semibold">{filteredLeads.length}</strong>
+            <span className="text-xs text-slate-500 light:text-slate-400 whitespace-nowrap bg-slate-950 light:bg-slate-50 px-3.5 py-2.5 border border-slate-800 light:border-slate-200 rounded-xl transition-colors duration-200 min-h-[44px] flex items-center justify-center">
+              Found: <strong className="text-slate-300 light:text-slate-700 font-semibold ml-1">{filteredLeads.length}</strong>
             </span>
 
-            {/* Add New Lead button */}
+            {/* Add New Lead button - touch-friendly height 44px on mobile */}
             <button
               onClick={handleAddLeadClick}
-              className="flex items-center gap-1.5 px-4 py-2.5 text-xs font-bold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl shadow-lg shadow-blue-500/10 hover:shadow-blue-500/25 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
+              className="flex items-center justify-center gap-1.5 px-4 py-2.5 min-h-[44px] md:min-h-[auto] text-xs font-bold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl shadow-lg shadow-blue-500/10 hover:shadow-blue-500/25 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
               title="Create New Lead"
               aria-label="Add New Lead"
             >
@@ -209,57 +208,10 @@ const Leads = () => {
 
       {/* ── Main Content Layout Viewer ───────────────────────────────────────── */}
       <div className="flex-1 transition-all duration-300">
-        {viewMode === 'table' ? (
-          <>
-            {/* Desktop table view */}
-            <div className="hidden md:block">
-              {filteredLeads.length === 0 ? (
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl">
-                  <EmptyState
-                    totalLeads={leads.length}
-                    searchQuery={searchQuery}
-                    activeFilter={activeFilter}
-                    onClearFilters={handleClearFilters}
-                  />
-                </div>
-              ) : (
-                <LeadTable
-                  leads={filteredLeads}
-                  onEdit={handleEditLeadClick}
-                  onDelete={handleDeleteLead}
-                />
-              )}
-            </div>
-
-            {/* Mobile responsive card fallback */}
-            <div className="block md:hidden">
-              {filteredLeads.length === 0 ? (
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl">
-                  <EmptyState
-                    totalLeads={leads.length}
-                    searchQuery={searchQuery}
-                    activeFilter={activeFilter}
-                    onClearFilters={handleClearFilters}
-                  />
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 gap-4">
-                  {filteredLeads.map((lead) => (
-                    <LeadCard
-                      key={lead.id}
-                      lead={lead}
-                      onEdit={handleEditLeadClick}
-                      onDelete={handleDeleteLead}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          </>
-        ) : (
-          /* Card view on all displays */
-          filteredLeads.length === 0 ? (
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl">
+        {/* Desktop view: Always full table layout (visible lg: and above) */}
+        <div className="hidden lg:block">
+          {filteredLeads.length === 0 ? (
+            <div className="bg-slate-900 light:bg-white border border-slate-800 light:border-slate-200 rounded-2xl shadow-md">
               <EmptyState
                 totalLeads={leads.length}
                 searchQuery={searchQuery}
@@ -268,7 +220,33 @@ const Leads = () => {
               />
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <LeadTable
+              leads={filteredLeads}
+              onEdit={handleEditLeadClick}
+              onDelete={handleDeleteLead}
+            />
+          )}
+        </div>
+
+        {/* Tablet view: hybrid toggle view (visible only on md: to lg: viewport sizes) */}
+        <div className="hidden md:block lg:hidden">
+          {filteredLeads.length === 0 ? (
+            <div className="bg-slate-900 light:bg-white border border-slate-800 light:border-slate-200 rounded-2xl shadow-md">
+              <EmptyState
+                totalLeads={leads.length}
+                searchQuery={searchQuery}
+                activeFilter={activeFilter}
+                onClearFilters={handleClearFilters}
+              />
+            </div>
+          ) : viewMode === 'table' ? (
+            <LeadTable
+              leads={filteredLeads}
+              onEdit={handleEditLeadClick}
+              onDelete={handleDeleteLead}
+            />
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {filteredLeads.map((lead) => (
                 <LeadCard
                   key={lead.id}
@@ -278,21 +256,46 @@ const Leads = () => {
                 />
               ))}
             </div>
-          )
-        )}
+          )}
+        </div>
+
+        {/* Mobile view: Always card layout (visible only on < md viewport sizes) */}
+        <div className="block md:hidden">
+          {filteredLeads.length === 0 ? (
+            <div className="bg-slate-900 light:bg-white border border-slate-800 light:border-slate-200 rounded-2xl shadow-md">
+              <EmptyState
+                totalLeads={leads.length}
+                searchQuery={searchQuery}
+                activeFilter={activeFilter}
+                onClearFilters={handleClearFilters}
+              />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-4">
+              {filteredLeads.map((lead) => (
+                <LeadCard
+                  key={lead.id}
+                  lead={lead}
+                  onEdit={handleEditLeadClick}
+                  onDelete={handleDeleteLead}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* ── Add / Edit Form Dialog Overlay ──────────────────────────────────── */}
       {isModalOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4 overflow-y-auto"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 light:bg-slate-900/60 backdrop-blur-sm sm:p-4 overflow-y-auto"
           onClick={handleCloseModal}
           role="dialog"
           aria-modal="true"
         >
-          {/* Form wrapper container */}
+          {/* Form wrapper container: full screen on Mobile (w-full h-full rounded-none), centered max-w-lg on Tablet+ */}
           <div
-            className="relative bg-slate-900 border border-slate-850 p-6 rounded-3xl max-w-xl w-full shadow-2xl animate-in fade-in zoom-in-95 duration-200"
+            className="relative bg-slate-900 light:bg-white border-0 sm:border border-slate-850 light:border-slate-200 p-6 rounded-none sm:rounded-3xl w-full h-full sm:h-auto sm:max-w-lg shadow-2xl animate-in fade-in zoom-in-95 duration-200 overflow-y-auto"
             onClick={(e) => e.stopPropagation()} // Stop click propagation to backdrop
           >
             <LeadForm

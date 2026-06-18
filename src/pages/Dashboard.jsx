@@ -11,6 +11,7 @@ import {
 // Import sleek icons from lucide-react to represent stats and headers
 import { Users, TrendingUp, DollarSign, Clock } from 'lucide-react';
 import { useLeads } from '../context/LeadContext';
+import { useTheme } from '../context/ThemeContext';
 
 // Import our custom modular dashboard components
 import StatsCard from '../components/dashboard/StatsCard';
@@ -40,6 +41,7 @@ const monthlyPerformanceData = [
 const Dashboard = () => {
   // ── Pull live leads from global context ─────────────────────────────────
   const { leads } = useLeads();
+  const { isLightMode } = useTheme();
 
   const handleAddNewLead = () => {
     alert('Add Lead form modal trigger. (Feature integration coming in Phase 8)');
@@ -80,20 +82,20 @@ const Dashboard = () => {
   return (
     <div className="flex flex-col gap-8">
       {/* Top Banner section with welcome greeting and gradient glow background */}
-      <div className="relative p-6 md:p-8 rounded-2xl bg-gradient-to-r from-slate-900 via-slate-900 to-blue-950 border border-slate-800 overflow-hidden shadow-xl">
-        <div className="absolute right-0 top-0 -mt-12 -mr-12 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="relative p-6 md:p-8 rounded-2xl bg-gradient-to-r from-slate-900 via-slate-900 to-blue-950 light:from-white light:via-slate-50 light:to-blue-50 border border-slate-800 light:border-slate-200 overflow-hidden shadow-xl transition-all duration-200">
+        <div className="absolute right-0 top-0 -mt-12 -mr-12 w-64 h-64 bg-blue-500/10 light:bg-blue-500/5 rounded-full blur-3xl pointer-events-none"></div>
         <div className="relative z-10 max-w-2xl">
-          <h2 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
+          <h2 className="text-2xl md:text-3xl font-extrabold text-white light:text-slate-900 tracking-tight">
             Welcome back, Sarah! 👋
           </h2>
-          <p className="mt-2 text-sm md:text-base text-slate-300 font-medium">
+          <p className="mt-2 text-sm md:text-base text-slate-300 light:text-slate-600 font-medium">
             Your pipeline value has grown by <span className="text-success font-bold">+8.4%</span> this week. You have <span className="text-primary font-bold">3 new leads</span> awaiting response.
           </p>
         </div>
       </div>
 
       {/* Grid of Key Performance Indicators (KPIs) - Responsive: 1 col on mobile, 2 on tablet, 4 on desktop */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatsCard
           title="Total Leads"
           value="1,482"
@@ -114,7 +116,7 @@ const Dashboard = () => {
           icon={TrendingUp}
           change={2.3}
           color="success"
-        />
+          />
         <StatsCard
           title="Avg Sales Cycle"
           value="14 Days"
@@ -124,23 +126,19 @@ const Dashboard = () => {
         />
       </div>
 
-      {/* Middle Grid: Pipeline bar overview and Quick Actions */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <PipelineOverview leads={leads} />
-        </div>
-        <div className="lg:col-span-1">
-          <QuickActions onAddLead={handleAddNewLead} onExport={handleExportData} />
-        </div>
-      </div>
+      {/* Main Charts & Widgets Grid - Responsive: Full-width charts on Mobile/Tablet, 2-column grid on Desktop */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Pipeline Overview */}
+        <PipelineOverview leads={leads} />
 
-      {/* Bottom Grid: Recharts Funnel visualization and Recent Leads list */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Performance Chart card container (Takes up 2 columns out of 3 on desktop) */}
-        <div className="lg:col-span-2 p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-md flex flex-col justify-between">
+        {/* Quick Actions */}
+        <QuickActions onAddLead={handleAddNewLead} onExport={handleExportData} />
+
+        {/* Performance Chart card container */}
+        <div className="p-6 rounded-2xl bg-slate-900 light:bg-white border border-slate-800 light:border-slate-200 shadow-md flex flex-col justify-between transition-colors duration-200">
           <div>
-            <h4 className="text-base font-bold text-white tracking-wide">Monthly Conversion Funnel</h4>
-            <p className="text-xs text-slate-500 mt-1">
+            <h4 className="text-base font-bold text-white light:text-black tracking-wide">Monthly Conversion Funnel</h4>
+            <p className="text-xs text-slate-500 light:text-slate-400 mt-1">
               Growth analysis comparing new incoming leads versus closed deals
             </p>
           </div>
@@ -158,15 +156,15 @@ const Dashboard = () => {
                     <stop offset="95%" stopColor="#22C55E" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke={isLightMode ? '#E2E8F0' : '#1E293B'} vertical={false} />
                 <XAxis dataKey="name" stroke="#64748B" tickLine={false} axisLine={false} />
                 <YAxis stroke="#64748B" tickLine={false} axisLine={false} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#0F172A',
-                    borderColor: '#1E293B',
+                    backgroundColor: isLightMode ? '#FFFFFF' : '#0F172A',
+                    borderColor: isLightMode ? '#E2E8F0' : '#1E293B',
                     borderRadius: '12px',
-                    color: '#F1F5F9',
+                    color: isLightMode ? '#0F172A' : '#F1F5F9',
                   }}
                 />
                 <Area
@@ -190,10 +188,8 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Recent Leads list container (Takes up 1 column out of 3 on desktop) */}
-        <div className="lg:col-span-1">
-          <RecentLeads leads={leads} />
-        </div>
+        {/* Recent Leads list container */}
+        <RecentLeads leads={leads} />
       </div>
     </div>
   );

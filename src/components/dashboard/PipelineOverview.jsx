@@ -58,23 +58,23 @@ const PipelineOverview = ({ leads = [] }) => {
   });
 
   return (
-    <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-md flex flex-col justify-between h-full">
+    <div className="p-6 rounded-2xl bg-slate-900 light:bg-white border border-slate-800 light:border-slate-200 shadow-md flex flex-col justify-between h-full transition-colors duration-200">
       <div>
-        <h4 className="text-base font-bold text-white tracking-wide">Pipeline Overview</h4>
-        <p className="text-xs text-slate-500 mt-1">
+        <h4 className="text-base font-bold text-white light:text-black tracking-wide">Pipeline Overview</h4>
+        <p className="text-xs text-slate-500 light:text-slate-400 mt-1">
           Visual distribution of active leads across sales process stages
         </p>
       </div>
 
       <div className="my-6">
         {totalLeads === 0 ? (
-          <div className="flex items-center justify-center h-8 bg-slate-950 border border-slate-800 rounded-lg text-slate-500 text-xs font-medium">
+          <div className="flex items-center justify-center h-8 bg-slate-950 light:bg-slate-50 border border-slate-800 light:border-slate-200 rounded-lg text-slate-500 light:text-slate-400 text-xs font-medium">
             No pipeline leads recorded
           </div>
         ) : (
           <div className="relative">
             {/* Visual horizontal segmented progress bar */}
-            <div className="h-4 w-full bg-slate-950 rounded-full flex overflow-hidden border border-slate-800">
+            <div className="h-4 w-full bg-slate-950 light:bg-slate-100 rounded-full flex overflow-hidden border border-slate-800 light:border-slate-200">
               {stageStats.map(
                 (stage) =>
                   stage.count > 0 && (
@@ -97,19 +97,19 @@ const PipelineOverview = ({ leads = [] }) => {
           return (
             <div
               key={stage.key}
-              className={`p-3 rounded-xl bg-slate-950/40 border border-slate-800/80 hover:border-slate-700 transition-colors flex flex-col justify-between`}
+              className={`p-3 rounded-xl bg-slate-950/40 light:bg-slate-50 border border-slate-800/80 light:border-slate-200 hover:border-slate-700 light:hover:border-slate-350 transition-colors flex flex-col justify-between`}
             >
               <div className="flex items-center gap-2">
                 <span className={`w-2.5 h-2.5 rounded-full ${stage.bgClass} shrink-0`} />
-                <span className="text-xs font-semibold text-slate-300">{stage.name}</span>
+                <span className="text-xs font-semibold text-slate-300 light:text-black">{stage.name}</span>
               </div>
               <div className="mt-2">
-                <p className="text-[10px] text-slate-500 font-medium">
-                  Leads: <strong className="text-slate-300">{stage.count}</strong>
+                <p className="text-[10px] text-slate-500 light:text-slate-400 font-medium">
+                  Leads: <strong className="text-slate-300 light:text-black">{stage.count}</strong>
                 </p>
-                <p className="text-[10px] text-slate-500 font-medium">
+                <p className="text-[10px] text-slate-500 light:text-slate-400 font-medium">
                   Value:{' '}
-                  <strong className="text-slate-300">
+                  <strong className="text-slate-300 light:text-black">
                     ${stage.valueSum.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                   </strong>
                 </p>

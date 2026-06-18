@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, X } from 'lucide-react';
 
 /**
  * @typedef {Object} Lead
@@ -103,18 +103,28 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5" noValidate>
-      <div className="flex justify-between items-center pb-3 border-b border-slate-800">
-        <h3 className="text-base font-bold text-white tracking-wide">
-          {isEditMode ? 'Modify Lead Details' : 'Add New Pipeline Lead'}
-        </h3>
-        <p className="text-[10px] text-slate-500 font-medium">Fields with * are required</p>
+      <div className="flex justify-between items-center pb-3 border-b border-slate-800 light:border-slate-200 transition-colors duration-200">
+        <div>
+          <h3 className="text-base font-bold text-white light:text-slate-800 tracking-wide">
+            {isEditMode ? 'Modify Lead Details' : 'Add New Pipeline Lead'}
+          </h3>
+          <p className="text-[10px] text-slate-500 light:text-slate-400 font-medium mt-0.5">Fields with * are required</p>
+        </div>
+        <button
+          type="button"
+          onClick={onCancel}
+          className="w-11 h-11 -mr-2 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-100 light:text-slate-500 light:hover:text-slate-900 hover:bg-slate-800 light:hover:bg-slate-100 transition-colors cursor-pointer"
+          aria-label="Close form"
+        >
+          <X className="w-5 h-5" />
+        </button>
       </div>
 
       {/* Grid containing input elements */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {/* Name input */}
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="lead-name" className="text-xs font-semibold text-slate-400">
+          <label htmlFor="lead-name" className="text-xs font-semibold text-slate-400 light:text-slate-600 transition-colors duration-200">
             Contact Name *
           </label>
           <input
@@ -124,14 +134,14 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
             value={formData.name}
             onChange={handleChange}
             placeholder="John Doe"
-            className={`w-full text-xs bg-slate-950 border rounded-xl px-4 py-2.5 text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-1 transition-all ${
+            className={`w-full text-xs bg-slate-950 light:bg-white border rounded-xl px-4 py-3 min-h-[44px] text-slate-100 light:text-slate-900 placeholder-slate-600 light:placeholder-slate-400 focus:outline-none focus:ring-1 transition-all duration-200 ${
               errors.name
-                ? 'border-red-500/50 focus:ring-red-500 focus:border-red-500'
-                : 'border-slate-800 focus:ring-blue-500 focus:border-blue-500'
+                ? 'border-red-500/50 light:border-red-500/40 focus:ring-red-500 focus:border-red-500'
+                : 'border-slate-800 light:border-slate-200 focus:ring-blue-500 focus:border-blue-500'
             }`}
           />
           {errors.name && (
-            <span className="text-[10px] text-red-400 font-semibold flex items-center gap-1 mt-0.5">
+            <span className="text-[10px] text-red-400 light:text-red-550 font-semibold flex items-center gap-1 mt-0.5 animate-pulse">
               <AlertCircle className="w-3 h-3" />
               {errors.name}
             </span>
@@ -140,7 +150,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
 
         {/* Company input */}
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="lead-company" className="text-xs font-semibold text-slate-400">
+          <label htmlFor="lead-company" className="text-xs font-semibold text-slate-400 light:text-slate-600 transition-colors duration-200">
             Company Name *
           </label>
           <input
@@ -150,14 +160,14 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
             value={formData.company}
             onChange={handleChange}
             placeholder="Acme Corp"
-            className={`w-full text-xs bg-slate-950 border rounded-xl px-4 py-2.5 text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-1 transition-all ${
+            className={`w-full text-xs bg-slate-950 light:bg-white border rounded-xl px-4 py-3 min-h-[44px] text-slate-100 light:text-slate-900 placeholder-slate-600 light:placeholder-slate-400 focus:outline-none focus:ring-1 transition-all duration-200 ${
               errors.company
-                ? 'border-red-500/50 focus:ring-red-500 focus:border-red-500'
-                : 'border-slate-800 focus:ring-blue-500 focus:border-blue-500'
+                ? 'border-red-500/50 light:border-red-500/40 focus:ring-red-500 focus:border-red-500'
+                : 'border-slate-800 light:border-slate-200 focus:ring-blue-500 focus:border-blue-500'
             }`}
           />
           {errors.company && (
-            <span className="text-[10px] text-red-400 font-semibold flex items-center gap-1 mt-0.5">
+            <span className="text-[10px] text-red-400 light:text-red-550 font-semibold flex items-center gap-1 mt-0.5 animate-pulse">
               <AlertCircle className="w-3 h-3" />
               {errors.company}
             </span>
@@ -166,7 +176,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
 
         {/* Email input */}
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="lead-email" className="text-xs font-semibold text-slate-400">
+          <label htmlFor="lead-email" className="text-xs font-semibold text-slate-400 light:text-slate-600 transition-colors duration-200">
             Email Address *
           </label>
           <input
@@ -176,14 +186,14 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
             value={formData.email}
             onChange={handleChange}
             placeholder="john@example.com"
-            className={`w-full text-xs bg-slate-950 border rounded-xl px-4 py-2.5 text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-1 transition-all ${
+            className={`w-full text-xs bg-slate-950 light:bg-white border rounded-xl px-4 py-3 min-h-[44px] text-slate-100 light:text-slate-900 placeholder-slate-600 light:placeholder-slate-400 focus:outline-none focus:ring-1 transition-all duration-200 ${
               errors.email
-                ? 'border-red-500/50 focus:ring-red-500 focus:border-red-500'
-                : 'border-slate-800 focus:ring-blue-500 focus:border-blue-500'
+                ? 'border-red-500/50 light:border-red-500/40 focus:ring-red-500 focus:border-red-500'
+                : 'border-slate-800 light:border-slate-200 focus:ring-blue-500 focus:border-blue-500'
             }`}
           />
           {errors.email && (
-            <span className="text-[10px] text-red-400 font-semibold flex items-center gap-1 mt-0.5">
+            <span className="text-[10px] text-red-400 light:text-red-550 font-semibold flex items-center gap-1 mt-0.5 animate-pulse">
               <AlertCircle className="w-3 h-3" />
               {errors.email}
             </span>
@@ -192,7 +202,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
 
         {/* Phone input */}
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="lead-phone" className="text-xs font-semibold text-slate-400">
+          <label htmlFor="lead-phone" className="text-xs font-semibold text-slate-400 light:text-slate-600 transition-colors duration-200">
             Phone Number
           </label>
           <input
@@ -202,13 +212,13 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
             value={formData.phone}
             onChange={handleChange}
             placeholder="+1 (555) 000-0000"
-            className="w-full text-xs bg-slate-950 border border-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-slate-100 placeholder-slate-600 rounded-xl px-4 py-2.5 focus:outline-none transition-all"
+            className="w-full text-xs bg-slate-950 light:bg-white border border-slate-800 light:border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-slate-100 light:text-slate-900 placeholder-slate-600 light:placeholder-slate-400 rounded-xl px-4 py-3 min-h-[44px] focus:outline-none transition-all duration-200"
           />
         </div>
 
         {/* Status dropdown */}
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="lead-status" className="text-xs font-semibold text-slate-400">
+          <label htmlFor="lead-status" className="text-xs font-semibold text-slate-400 light:text-slate-600 transition-colors duration-200">
             Pipeline Status
           </label>
           <select
@@ -216,10 +226,10 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
             name="status"
             value={formData.status}
             onChange={handleChange}
-            className="w-full text-xs bg-slate-950 border border-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-slate-100 rounded-xl px-4 py-2.5 focus:outline-none cursor-pointer"
+            className="w-full text-xs bg-slate-950 light:bg-white border border-slate-800 light:border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-slate-100 light:text-slate-900 rounded-xl px-4 py-3 min-h-[44px] focus:outline-none cursor-pointer transition-colors duration-200"
           >
             {statusOptions.map((opt) => (
-              <option key={opt} value={opt} className="bg-slate-900">
+              <option key={opt} value={opt} className="bg-slate-900 light:bg-white text-slate-100 light:text-slate-900">
                 {opt}
               </option>
             ))}
@@ -228,7 +238,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
 
         {/* Source dropdown */}
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="lead-source" className="text-xs font-semibold text-slate-400">
+          <label htmlFor="lead-source" className="text-xs font-semibold text-slate-400 light:text-slate-600 transition-colors duration-200">
             Lead Source
           </label>
           <select
@@ -236,10 +246,10 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
             name="source"
             value={formData.source}
             onChange={handleChange}
-            className="w-full text-xs bg-slate-950 border border-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-slate-100 rounded-xl px-4 py-2.5 focus:outline-none cursor-pointer"
+            className="w-full text-xs bg-slate-950 light:bg-white border border-slate-800 light:border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-slate-100 light:text-slate-900 rounded-xl px-4 py-3 min-h-[44px] focus:outline-none cursor-pointer transition-colors duration-200"
           >
             {sourceOptions.map((opt) => (
-              <option key={opt} value={opt} className="bg-slate-900">
+              <option key={opt} value={opt} className="bg-slate-900 light:bg-white text-slate-100 light:text-slate-900">
                 {opt}
               </option>
             ))}
@@ -247,18 +257,18 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
         </div>
       </div>
 
-      {/* Button Row actions */}
-      <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-800 mt-2">
+      {/* Button Row actions - touch-friendly minimum 44px height */}
+      <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-800 light:border-slate-200 mt-2 transition-colors duration-200">
         <button
           type="button"
           onClick={onCancel}
-          className="px-5 py-2.5 text-xs font-semibold bg-slate-950 hover:bg-slate-850 text-slate-400 hover:text-slate-200 border border-slate-850 hover:border-slate-750 rounded-xl transition-colors cursor-pointer"
+          className="px-5 py-2.5 min-h-[44px] flex items-center justify-center text-xs font-semibold bg-slate-950 light:bg-slate-100 hover:bg-slate-850 light:hover:bg-slate-200 text-slate-400 light:text-slate-600 hover:text-slate-200 light:hover:text-slate-900 border border-slate-850 light:border-slate-200 hover:border-slate-750 light:hover:border-slate-300 rounded-xl transition-all duration-200 cursor-pointer"
         >
           Cancel
         </button>
         <button
           type="submit"
-          className="px-6 py-2.5 text-xs font-bold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl shadow-lg shadow-blue-500/10 hover:shadow-blue-500/25 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
+          className="px-6 py-2.5 min-h-[44px] flex items-center justify-center text-xs font-bold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl shadow-lg shadow-blue-500/10 hover:shadow-blue-500/25 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
         >
           {isEditMode ? 'Save Changes' : 'Create Lead'}
         </button>
