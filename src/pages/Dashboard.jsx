@@ -12,6 +12,8 @@ import {
 import { Users, TrendingUp, DollarSign, Clock } from 'lucide-react';
 import { useLeads } from '../context/LeadContext';
 import { useTheme } from '../context/ThemeContext';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
 
 // Import our custom modular dashboard components
 import StatsCard from '../components/dashboard/StatsCard';
@@ -39,12 +41,13 @@ const monthlyPerformanceData = [
  * @returns {React.JSX.Element} The rendered Dashboard page.
  */
 const Dashboard = () => {
+  const navigate = useNavigate();
   // ── Pull live leads from global context ─────────────────────────────────
   const { leads } = useLeads();
   const { isLightMode } = useTheme();
 
   const handleAddNewLead = () => {
-    alert('Add Lead form modal trigger. (Feature integration coming in Phase 8)');
+    navigate('/leads/new');
   };
 
   /**
@@ -75,7 +78,7 @@ const Dashboard = () => {
       document.body.removeChild(link);
     } catch (error) {
       console.error('Error exporting CSV:', error);
-      alert('Failed to export leads data.');
+      toast.error('Failed to export leads data.');
     }
   };
 

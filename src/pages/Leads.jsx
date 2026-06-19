@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useLeads } from '../context/LeadContext';
 import { toast } from 'react-hot-toast';
 import { Plus, LayoutGrid, List } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 
 // Import custom subcomponents
 import LeadCard from '../components/leads/LeadCard';
@@ -24,13 +25,28 @@ import EmptyState from '../components/common/EmptyState';
 const Leads = () => {
   // ── Global lead state from context ─────────────────────────────────────
   const { leads, addLead, updateLead, deleteLead } = useLeads();
+  const location = useLocation();
+
+  // Helper to extract search queries from URL
+  const getSearchQueryFromUrl = () => {
+    const params = new URLSearchParams(location.search);
+    return params.get('search') || '';
+  };
 
   // Search & Filter state
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(getSearchQueryFromUrl());
   const [activeFilter, setActiveFilter] = useState('All');
 
   // Layout presentation toggle state ('table' | 'cards')
   const [viewMode, setViewMode] = useState('table');
+
+  // Synchronize local search query state with URL query modifications
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const query = params.get('search') || '';
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setSearchQuery(query);
+  }, [location.search]);
 
   // Form modal display controller state
   const [isModalOpen, setIsModalOpen] = useState(false);

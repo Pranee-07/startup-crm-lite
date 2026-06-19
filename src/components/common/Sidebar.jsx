@@ -1,5 +1,5 @@
-import React from 'react'; // Import React for component definition
-import { NavLink } from 'react-router-dom'; // Import NavLink from react-router-dom for navigation with active states
+import { useState, useEffect } from 'react';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom'; // Import NavLink, useNavigate and useLocation from react-router-dom for navigation with active states
 // Import modern icons from lucide-react for CRM links and layouts
 import { 
   LayoutDashboard, // Dashboard icon
@@ -14,6 +14,33 @@ import {
 // - isOpen: boolean indicating if mobile sidebar is open
 // - toggleSidebar: function to close the sidebar on mobile
 const Sidebar = ({ isOpen, toggleSidebar }) => {
+  const navigate = useNavigate(); // Hook for navigation
+  const location = useLocation(); // Hook for location
+
+  const [profile, setProfile] = useState({
+    firstName: 'Sarah',
+    lastName: 'Jenkins',
+    title: 'Founder & CEO',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=100',
+  });
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('crm_profile_v1');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setProfile({
+          firstName: parsed.firstName ?? 'Sarah',
+          lastName: parsed.lastName ?? 'Jenkins',
+          title: parsed.title ?? 'Founder & CEO',
+          avatar: parsed.avatar ?? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=100',
+        });
+      }
+    } catch (err) {
+      console.error('Failed to load profile in sidebar:', err);
+    }
+  }, [location.pathname]);
   
   // Array of navigation link definitions to keep code clean and modular
   const navItems = [
@@ -108,23 +135,51 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
         {/* Footer Area with user profile details / settings link */}
         <div className="p-3 border-t border-slate-800 light:border-slate-200 bg-slate-950/40 light:bg-slate-50">
-          <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-800/40 light:hover:bg-slate-150/50 transition-colors cursor-pointer group">
-            {/* User avatar container */}
-            <div className="relative md:mx-auto lg:mx-0">
-              <img 
-                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=100" // Unsplash avatar placeholder
-                alt="Profile Avatar" 
-                className="w-10 h-10 rounded-full object-cover border border-slate-700 light:border-slate-350 shadow-sm"
-              />
-              <span className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-slate-900 light:border-white rounded-full"></span> {/* Active online badge */}
-            </div>
-            {/* User credentials */}
-            <div className="flex-1 min-w-0 md:hidden lg:block">
-              <p className="text-sm font-semibold text-slate-200 light:text-slate-800 truncate group-hover:text-blue-400 light:group-hover:text-blue-600 transition-colors">Sarah Jenkins</p>
-              <p className="text-xs text-slate-500 light:text-slate-400 truncate">Founder & CEO</p>
-            </div>
-            {/* Settings icon */}
-            <Settings className="w-4 h-4 text-slate-500 light:text-slate-400 group-hover:text-slate-300 light:group-hover:text-slate-600 transition-colors md:hidden lg:block" />
+          <div className="flex items-center justify-between gap-2 p-1.5 rounded-xl transition-colors">
+            {/* User profile button (avatar + credentials) */}
+            <button
+              onClick={() => {
+                if (isOpen) toggleSidebar();
+                navigate('/profile');
+              }}
+              className="flex items-center gap-3 text-left flex-1 min-w-0 hover:bg-slate-800/40 light:hover:bg-slate-100/50 p-1 rounded-lg transition-colors cursor-pointer group"
+              title="View Profile"
+              aria-label="View user profile settings"
+            >
+              {/* User avatar container */}
+              <div className="relative md:mx-auto lg:mx-0">
+                {profile.avatar ? (
+                  <img 
+                    src={profile.avatar} 
+                    alt="Profile Avatar" 
+                    className="w-10 h-10 rounded-full object-cover border border-slate-700 light:border-slate-350 shadow-sm"
+                  />
+                ) : (
+                  <div className="w-10 h-10 rounded-full bg-slate-850 light:bg-slate-100 flex items-center justify-center border border-slate-700 light:border-slate-300 text-slate-300 light:text-slate-600 text-xs font-bold shadow-sm">
+                    {profile.firstName.charAt(0)}{profile.lastName.charAt(0)}
+                  </div>
+                )}
+                <span className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-slate-900 light:border-white rounded-full"></span> {/* Active online badge */}
+              </div>
+              {/* User credentials */}
+              <div className="flex-1 min-w-0 md:hidden lg:block">
+                <p className="text-sm font-semibold text-slate-200 light:text-slate-800 truncate group-hover:text-blue-400 light:group-hover:text-blue-600 transition-colors">{profile.firstName} {profile.lastName}</p>
+                <p className="text-xs text-slate-500 light:text-slate-400 truncate">{profile.title}</p>
+              </div>
+            </button>
+
+            {/* Settings button */}
+            <button
+              onClick={() => {
+                if (isOpen) toggleSidebar();
+                navigate('/settings');
+              }}
+              className="p-2 rounded-lg hover:bg-slate-800/40 light:hover:bg-slate-100/50 text-slate-500 light:text-slate-400 hover:text-slate-300 light:hover:text-slate-655 transition-colors cursor-pointer md:hidden lg:block"
+              title="Settings"
+              aria-label="Application settings"
+            >
+              <Settings className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </aside>
