@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 // Import Recharts components for beautiful, interactive graphical data visualization
 import {
   AreaChart,
@@ -11,6 +12,7 @@ import {
 // Import sleek icons from lucide-react to represent stats and headers
 import { Users, TrendingUp, DollarSign, Clock } from 'lucide-react';
 import { useLeads } from '../context/LeadContext';
+import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
@@ -21,18 +23,6 @@ import PipelineOverview from '../components/dashboard/PipelineOverview';
 import RecentLeads from '../components/dashboard/RecentLeads';
 import QuickActions from '../components/dashboard/QuickActions';
 
-// Mock performance data mapping monthly leads and successful conversions
-const monthlyPerformanceData = [
-  { name: 'Jan', Leads: 180, Conversions: 42 },
-  { name: 'Feb', Leads: 250, Conversions: 68 },
-  { name: 'Mar', Leads: 320, Conversions: 95 },
-  { name: 'Apr', Leads: 410, Conversions: 128 },
-  { name: 'May', Leads: 560, Conversions: 184 },
-  { name: 'Jun', Leads: 780, Conversions: 248 },
-];
-
-
-
 /**
  * Dashboard page assembling stats, pipeline summary, recent lead list,
  * quick action buttons, and analytical visual trends.
@@ -42,9 +32,83 @@ const monthlyPerformanceData = [
  */
 const Dashboard = () => {
   const navigate = useNavigate();
-  // ── Pull live leads from global context ─────────────────────────────────
-  const { leads } = useLeads();
+  // ── Pull live leads, summary stats and user from global contexts ─────────
+  const { leads, stats, monthlyStats, pagination } = useLeads();
+  const { user } = useAuth();
   const { isLightMode } = useTheme();
+
+  // Dynamic KPI Calculations synchronized with MongoDB Atlas
+  const totalLeads = useMemo(() => {
+    return stats?.totalLeads ?? pagination?.total ?? leads.length;
+  }, [stats, pagination, leads]);
+
+  const newLeadsCount = useMemo(() => {
+    if (stats?.statusBreakdown && stats.statusBreakdown['New'] !== undefined) {
+      return stats.statusBreakdown['New'];
+    }
+    return leads.filter((l) => (l.status || l.stage) === 'New').length;
+  }, [stats, leads]);
+
+  const pipelineValue = useMemo(() => {
+    return leads
+      .filter((l) => (l.status || l.stage) !== 'Lost')
+      .reduce((sum, lead) => {
+        const val = typeof lead.value === 'string'
+          ? parseFloat(lead.value.replace(/[^0-9.-]+/g, '')) || 0
+          : parseFloat(lead.value) || 0;
+        return sum + val;
+      }, 0);
+  }, [leads]);
+
+  const conversionRate = useMemo(() => {
+    if (stats?.conversionRate !== undefined) {
+      return `${stats.conversionRate}%`;
+    }
+    if (totalLeads === 0) return '0%';
+    const wonCount = leads.filter((l) => {
+      const s = (l.status || l.stage || '').toLowerCase();
+      return s === 'won' || s === 'converted';
+    }).length;
+    return `${((wonCount / totalLeads) * 100).toFixed(1)}%`;
+  }, [stats, totalLeads, leads]);
+
+  const avgSalesCycle = useMemo(() => {
+    const wonLeads = leads.filter((l) => {
+      const s = (l.status || l.stage || '').toLowerCase();
+      return (s === 'won' || s === 'converted') && (l.wonAt || l.updatedAt) && l.createdAt;
+    });
+    if (wonLeads.length > 0) {
+      const totalDays = wonLeads.reduce((sum, l) => {
+        const start = new Date(l.createdAt);
+        const end = new Date(l.wonAt || l.updatedAt);
+        return sum + Math.max(1, Math.round((end - start) / (1000 * 60 * 60 * 24)));
+      }, 0);
+      return `${Math.round(totalDays / wonLeads.length)} Days`;
+    }
+    if (leads.length > 0) {
+      const dates = leads.map((l) => new Date(l.createdAt || l.dateAdded)).filter((d) => !isNaN(d.getTime()));
+      if (dates.length > 1) {
+        const span = Math.max(...dates) - Math.min(...dates);
+        const days = Math.round(span / (1000 * 60 * 60 * 24));
+        return `${Math.max(1, days)} Days`;
+      }
+      return '1 Day';
+    }
+    return '0 Days';
+  }, [leads]);
+
+  const chartData = useMemo(() => {
+    if (Array.isArray(monthlyStats) && monthlyStats.length > 0) {
+      return monthlyStats.map((item) => ({
+        name: item.month || item.name || '',
+        Leads: item.Leads ?? item.total ?? 0,
+        Conversions: item.Conversions ?? item.won ?? 0,
+      }));
+    }
+    // Fallback default months if no history exists yet
+    const defaultMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+    return defaultMonths.map((m) => ({ name: m, Leads: 0, Conversions: 0 }));
+  }, [monthlyStats]);
 
   const handleAddNewLead = () => {
     navigate('/leads/new');
@@ -89,10 +153,11 @@ const Dashboard = () => {
         <div className="absolute right-0 top-0 -mt-12 -mr-12 w-64 h-64 bg-blue-500/10 light:bg-blue-500/5 rounded-full blur-3xl pointer-events-none"></div>
         <div className="relative z-10 max-w-2xl">
           <h2 className="text-2xl md:text-3xl font-extrabold text-white light:text-slate-900 tracking-tight">
-            Welcome back, Sarah! 👋
+            Welcome back, {user?.name ? user.name.split(' ')[0] : 'User'}! 👋
           </h2>
           <p className="mt-2 text-sm md:text-base text-slate-300 light:text-slate-600 font-medium">
-            Your pipeline value has grown by <span className="text-success font-bold">+8.4%</span> this week. You have <span className="text-primary font-bold">3 new leads</span> awaiting response.
+            Your pipeline has <span className="text-primary font-bold">{totalLeads} {totalLeads === 1 ? 'lead' : 'leads'}</span> recorded. You have{' '}
+            <span className="text-primary font-bold">{newLeadsCount} new {newLeadsCount === 1 ? 'lead' : 'leads'}</span> awaiting response.
           </p>
         </div>
       </div>
@@ -101,30 +166,30 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatsCard
           title="Total Leads"
-          value="1,482"
+          value={totalLeads.toLocaleString()}
           icon={Users}
-          change={14.2}
+          change={totalLeads > 0 ? 100 : 0}
           color="primary"
         />
         <StatsCard
           title="Pipeline Value"
-          value="$383,700"
+          value={pipelineValue > 0 ? `$${pipelineValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}` : '$0'}
           icon={DollarSign}
-          change={8.4}
+          change={pipelineValue > 0 ? 8.4 : 0}
           color="indigo"
         />
         <StatsCard
           title="Conversion Rate"
-          value="31.8%"
+          value={conversionRate}
           icon={TrendingUp}
-          change={2.3}
+          change={parseFloat(conversionRate) > 0 ? parseFloat(conversionRate) : 0}
           color="success"
-          />
+        />
         <StatsCard
           title="Avg Sales Cycle"
-          value="14 Days"
+          value={avgSalesCycle}
           icon={Clock}
-          change={-12.5}
+          change={0}
           color="warning"
         />
       </div>
@@ -148,7 +213,7 @@ const Dashboard = () => {
 
           <div className="h-72 mt-6 w-full text-xs">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={monthlyPerformanceData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="leadsGrad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#2563EB" stopOpacity={0.2} />
@@ -161,7 +226,7 @@ const Dashboard = () => {
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke={isLightMode ? '#E2E8F0' : '#1E293B'} vertical={false} />
                 <XAxis dataKey="name" stroke="#64748B" tickLine={false} axisLine={false} />
-                <YAxis stroke="#64748B" tickLine={false} axisLine={false} />
+                <YAxis stroke="#64748B" tickLine={false} axisLine={false} allowDecimals={false} />
                 <Tooltip
                   contentStyle={{
                     backgroundColor: isLightMode ? '#FFFFFF' : '#0F172A',

@@ -3,8 +3,7 @@
 @custom-variant light (&:where(.light, .light *));
 
 @theme {
-
-    --color-primary: #2563EB;
+  --color-primary: #2563EB;
   --color-success: #22C55E;
   --color-warning: #F59E0B;
   --color-danger: #EF4444;
@@ -14,4 +13,27 @@
 
   --color-text-dark: #0F172A;
   --color-text-gray: #64748B;
+
+  /* Extended slate palette for UI cards, borders, dividers, and text */
+  --color-slate-150: #f1f5f9;
+  --color-slate-350: #cbd5e1;
+  --color-slate-405: #94a3b8;
+  --color-slate-450: #7d8da1;
+  --color-slate-550: #5b6b82;
+  --color-slate-555: #505f72;
+  --color-slate-650: #3d4b60;
+  --color-slate-655: #384556;
+  --color-slate-750: #263345;
+  --color-slate-850: #172033;
+
+  /* Extended color accents */
+  --color-amber-650: #d97706;
+  --color-amber-750: #b45309;
+  --color-red-550: #ef4444;
+  --color-red-650: #b91c1c;
+  --color-blue-650: #1d4ed8;
+  --color-emerald-650: #047857;
+  --color-emerald-750: #065f46;
+  --color-rose-750: #9f1239;
+  --color-purple-650: #6d28d9;
 }

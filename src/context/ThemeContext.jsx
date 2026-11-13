@@ -43,10 +43,15 @@ export const ThemeProvider = ({ children }) => {
   // Keep the DOM class and localStorage in sync whenever isLightMode changes
   useEffect(() => {
     const root = document.documentElement;
+    const body = document.body;
     if (isLightMode) {
       root.classList.add('light');
+      if (body) body.classList.add('light');
+      root.style.colorScheme = 'light';
     } else {
       root.classList.remove('light');
+      if (body) body.classList.remove('light');
+      root.style.colorScheme = 'dark';
     }
     try {
       localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(isLightMode));
@@ -63,8 +68,15 @@ export const ThemeProvider = ({ children }) => {
     setIsLightMode((prev) => !prev);
   }, []);
 
+  /**
+   * Explicitly sets light mode to true or false.
+   */
+  const setLightMode = useCallback((value) => {
+    setIsLightMode(Boolean(value));
+  }, []);
+
   /** @type {ThemeContextValue} */
-  const value = { isLightMode, toggleTheme };
+  const value = { isLightMode, toggleTheme, setLightMode };
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 };

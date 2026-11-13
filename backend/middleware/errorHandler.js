@@ -40,7 +40,12 @@ export const errorHandler = (err, req, res, next) => {
       ? 'Token expired, please log in again'
       : 'Invalid token, authorization denied';
   }
-  // 5. Default fallback to 500 "Server error"
+  // 5. Mongoose buffering timeout / connection errors → 503
+  else if (err.name === 'MongooseError' && err.message && err.message.includes('buffering timed out')) {
+    statusCode = 503;
+    message = 'Database request timed out. Please try again.';
+  }
+  // 6. Default fallback to 500 "Server error"
   else if (statusCode === 500) {
     message = 'Server error';
   }

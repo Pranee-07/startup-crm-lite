@@ -94,15 +94,16 @@ const Leads = () => {
    *
    * @param {string} id - Lead identifier
    */
-  const handleDeleteLead = (id) => {
-    const leadToDelete = leads.find((l) => l.id === id);
+  const handleDeleteLead = async (id) => {
+    const leadToDelete = leads.find((l) => l.id === id || l._id === id);
     const leadName = leadToDelete ? leadToDelete.name : 'Lead';
 
     if (window.confirm(`Are you sure you want to permanently delete lead: ${leadName}?`)) {
-      deleteLead(id);
-      toast.error(`${leadName} deleted successfully.`, {
-        icon: '🗑️',
-      });
+      try {
+        await deleteLead(id);
+      } catch {
+        // Error toast is handled by deleteLead in LeadContext
+      }
     }
   };
 
@@ -112,31 +113,34 @@ const Leads = () => {
    *
    * @param {object} formData - Form details collected from LeadForm
    */
-  const handleFormSubmit = (formData) => {
-    if (selectedLead) {
-      // Edit / Update mode — merge changed fields into existing lead
-      updateLead(formData.id, {
-        name: formData.name,
-        company: formData.company,
-        email: formData.email,
-        phone: formData.phone,
-        status: formData.status,
-        source: formData.source,
-      });
-      toast.success(`${formData.name} updated successfully.`);
-    } else {
-      // Create mode — addLead auto-generates id + createdAt
-      addLead({
-        name: formData.name,
-        company: formData.company,
-        email: formData.email,
-        phone: formData.phone,
-        status: formData.status,
-        source: formData.source,
-      });
-      toast.success(`${formData.name} created successfully.`);
+  const handleFormSubmit = async (formData) => {
+    try {
+      if (selectedLead) {
+        // Edit / Update mode — merge changed fields into existing lead
+        const targetId = formData.id || selectedLead.id || selectedLead._id;
+        await updateLead(targetId, {
+          name: formData.name,
+          company: formData.company,
+          email: formData.email,
+          phone: formData.phone,
+          status: formData.status,
+          source: formData.source,
+        });
+      } else {
+        // Create mode — addLead saves to MongoDB Atlas
+        await addLead({
+          name: formData.name,
+          company: formData.company,
+          email: formData.email,
+          phone: formData.phone,
+          status: formData.status,
+          source: formData.source,
+        });
+      }
+      handleCloseModal();
+    } catch {
+      // Error toast is handled by LeadContext
     }
-    handleCloseModal();
   };
 
   /**

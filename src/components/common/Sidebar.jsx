@@ -7,8 +7,10 @@ import {
   BarChart3,       // Analytics icon
   Settings,        // Settings placeholder icon
   Compass,         // Branding compass icon
-  X                // Close icon for mobile menu
+  X,               // Close icon for mobile menu
+  LogOut           // Logout icon
 } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 // Sidebar component receives:
 // - isOpen: boolean indicating if mobile sidebar is open
@@ -16,6 +18,7 @@ import {
 const Sidebar = ({ isOpen, toggleSidebar }) => {
   const navigate = useNavigate(); // Hook for navigation
   const location = useLocation(); // Hook for location
+  const { user, logout } = useAuth(); // Hook for auth user and session management
 
   const [profile, setProfile] = useState({
     firstName: 'Sarah',
@@ -163,8 +166,12 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
               </div>
               {/* User credentials */}
               <div className="flex-1 min-w-0 md:hidden lg:block">
-                <p className="text-sm font-semibold text-slate-200 light:text-slate-800 truncate group-hover:text-blue-400 light:group-hover:text-blue-600 transition-colors">{profile.firstName} {profile.lastName}</p>
-                <p className="text-xs text-slate-500 light:text-slate-400 truncate">{profile.title}</p>
+                <p className="text-sm font-semibold text-slate-200 light:text-slate-800 truncate group-hover:text-blue-400 light:group-hover:text-blue-600 transition-colors">
+                  {user?.name || `${profile.firstName} ${profile.lastName}`}
+                </p>
+                <p className="text-xs text-slate-500 light:text-slate-400 truncate">
+                  {user?.email || profile.title}
+                </p>
               </div>
             </button>
 
@@ -179,6 +186,16 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
               aria-label="Application settings"
             >
               <Settings className="w-4 h-4" />
+            </button>
+
+            {/* Logout button */}
+            <button
+              onClick={logout}
+              className="p-2 rounded-lg hover:bg-red-500/10 text-slate-500 hover:text-red-400 transition-colors cursor-pointer md:hidden lg:block"
+              title="Sign Out"
+              aria-label="Sign out"
+            >
+              <LogOut className="w-4 h-4" />
             </button>
           </div>
         </div>

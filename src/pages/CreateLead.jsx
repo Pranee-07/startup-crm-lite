@@ -16,21 +16,24 @@ const CreateLead = () => {
 
   /**
    * Delegates the form submission data to LeadContext.addLead,
-   * triggers a success toast, and redirects back to the main Leads list.
+   * awaits successful creation, and redirects back to the main Leads list.
    *
    * @param {object} formData - Form details collected from LeadForm.
    */
-  const handleFormSubmit = (formData) => {
-    addLead({
-      name: formData.name,
-      company: formData.company,
-      email: formData.email,
-      phone: formData.phone,
-      status: formData.status,
-      source: formData.source,
-    });
-    toast.success(`${formData.name} created successfully.`);
-    navigate('/leads');
+  const handleFormSubmit = async (formData) => {
+    try {
+      await addLead({
+        name: formData.name,
+        company: formData.company,
+        email: formData.email,
+        phone: formData.phone,
+        status: formData.status,
+        source: formData.source,
+      });
+      navigate('/leads');
+    } catch {
+      // Error toast is handled inside addLead in LeadContext
+    }
   };
 
   /**

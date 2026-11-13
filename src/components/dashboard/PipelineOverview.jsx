@@ -33,14 +33,25 @@ const PipelineOverview = ({ leads = [] }) => {
     { name: 'Lost', key: 'Lost', bgClass: 'bg-danger', textClass: 'text-danger', borderClass: 'border-danger/20' },
   ];
 
+  // Helper to match lead stages flexibly across both legacy and schema statuses
+  const isStageMatch = (lead, key) => {
+    const stageVal = (lead.stage || lead.status || '').toLowerCase();
+    const target = key.toLowerCase();
+    if (stageVal === target) return true;
+    if (target === 'proposal' && stageVal.includes('proposal')) return true;
+    if (target === 'negotiation' && (stageVal.includes('meeting') || stageVal.includes('negotiat') || stageVal.includes('qualif'))) return true;
+    if (target === 'won' && (stageVal.includes('won') || stageVal.includes('convert'))) return true;
+    return false;
+  };
+
   // Calculate the occurrences and percentage representation of each stage
   const stageStats = stageConfig.map((stage) => {
-    const count = leads.filter((lead) => lead.stage?.toLowerCase() === stage.key.toLowerCase()).length;
+    const count = leads.filter((lead) => isStageMatch(lead, stage.key)).length;
     const percentage = totalLeads > 0 ? (count / totalLeads) * 100 : 0;
     
     // Sum total pipeline value for this stage
     const valueSum = leads
-      .filter((lead) => lead.stage?.toLowerCase() === stage.key.toLowerCase())
+      .filter((lead) => isStageMatch(lead, stage.key))
       .reduce((sum, lead) => {
         // Parse numerical value from string format e.g., "$38,200" or 38200
         const numericVal = typeof lead.value === 'string'

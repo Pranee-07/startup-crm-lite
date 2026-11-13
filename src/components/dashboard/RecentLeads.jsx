@@ -21,9 +21,9 @@
  * @returns {React.JSX.Element} The rendered RecentLeads component.
  */
 const RecentLeads = ({ leads = [] }) => {
-  // Sort leads by dateAdded descending and take top 5
+  // Sort leads by dateAdded or createdAt descending and take top 5
   const recentLeads = [...leads]
-    .sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded))
+    .sort((a, b) => new Date(b.dateAdded || b.createdAt || 0) - new Date(a.dateAdded || a.createdAt || 0))
     .slice(0, 5);
 
   /**
@@ -32,29 +32,27 @@ const RecentLeads = ({ leads = [] }) => {
    * @param {string} stage - Pipeline stage status
    * @returns {string} Tailwind CSS class classes
    */
-  /**
-   * Helper function to return styling classes for pipeline stage badges
-   *
-   * @param {string} stage - Pipeline stage status
-   * @returns {string} Tailwind CSS class classes
-   */
   const getStageBadgeClass = (stage = '') => {
-    switch (stage.toLowerCase()) {
-      case 'new':
-        return 'bg-purple-500/10 text-purple-400 border-purple-500/20 light:bg-purple-50 light:text-purple-600 light:border-purple-200';
-      case 'contacted':
-        return 'bg-primary/10 text-blue-400 border-blue-500/20 light:bg-blue-50 light:text-blue-600 light:border-blue-200';
-      case 'proposal':
-        return 'bg-warning/10 text-warning border-warning/20 light:bg-amber-50 light:text-amber-750 light:border-amber-200';
-      case 'negotiation':
-        return 'bg-success/10 text-success border-success/20 light:bg-emerald-50 light:text-emerald-700 light:border-emerald-200';
-      case 'won':
-        return 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20 light:bg-cyan-50 light:text-cyan-600 light:border-cyan-200';
-      case 'lost':
-        return 'bg-danger/10 text-danger border-danger/20 light:bg-rose-50 light:text-rose-700 light:border-rose-200';
-      default:
-        return 'bg-slate-500/10 text-slate-400 border-slate-500/20 light:bg-slate-100 light:text-slate-650 light:border-slate-200';
+    const s = stage.toLowerCase();
+    if (s === 'new') {
+      return 'bg-purple-500/10 text-purple-400 border-purple-500/20 light:bg-purple-50 light:text-purple-600 light:border-purple-200';
     }
+    if (s === 'contacted') {
+      return 'bg-primary/10 text-blue-400 border-blue-500/20 light:bg-blue-50 light:text-blue-600 light:border-blue-200';
+    }
+    if (s.includes('proposal')) {
+      return 'bg-warning/10 text-warning border-warning/20 light:bg-amber-50 light:text-amber-750 light:border-amber-200';
+    }
+    if (s.includes('meeting') || s.includes('negotiat') || s.includes('qualif')) {
+      return 'bg-success/10 text-success border-success/20 light:bg-emerald-50 light:text-emerald-700 light:border-emerald-200';
+    }
+    if (s.includes('won') || s.includes('convert')) {
+      return 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20 light:bg-cyan-50 light:text-cyan-600 light:border-cyan-200';
+    }
+    if (s === 'lost') {
+      return 'bg-danger/10 text-danger border-danger/20 light:bg-rose-50 light:text-rose-700 light:border-rose-200';
+    }
+    return 'bg-slate-500/10 text-slate-400 border-slate-500/20 light:bg-slate-100 light:text-slate-650 light:border-slate-200';
   };
 
   /**

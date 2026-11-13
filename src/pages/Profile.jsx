@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { User, Mail, Phone, Briefcase, FileText, ArrowLeft, Camera } from 'lucide-react';
+import { User, Mail, Phone, Briefcase, FileText, ArrowLeft, Camera, Loader2 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import authService from '../services/authService';
 
 const PROFILE_STORAGE_KEY = 'crm_profile_v1';
 const defaultProfile = {
@@ -23,6 +25,8 @@ const defaultProfile = {
  */
 const Profile = () => {
   const navigate = useNavigate();
+  const { user, setUser } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   // Load initial profile details from localStorage
   const [profile, setProfile] = useState(() => {
@@ -33,6 +37,23 @@ const Profile = () => {
       return defaultProfile;
     }
   });
+
+  // Sync profile details when authenticated user loads
+  useEffect(() => {
+    if (user) {
+      setProfile((prev) => {
+        const parts = (user.name || '').trim().split(' ');
+        const fName = parts[0] || prev.firstName;
+        const lName = parts.slice(1).join(' ') || prev.lastName;
+        return {
+          ...prev,
+          firstName: fName,
+          lastName: lName,
+          email: user.email || prev.email,
+        };
+      });
+    }
+  }, [user]);
 
   const [errors, setErrors] = useState({});
 
@@ -48,9 +69,9 @@ const Profile = () => {
   };
 
   /**
-   * Submit validator
+   * Submit validator and backend profile synchronizer
    */
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     // Quick validation checks
@@ -66,17 +87,32 @@ const Profile = () => {
       return;
     }
 
+    setIsSubmitting(true);
     try {
+      const fullName = `${profile.firstName.trim()} ${profile.lastName.trim()}`.trim();
+      const res = await authService.updateProfile({ name: fullName });
+      if (res?.user && setUser) {
+        setUser(res.user);
+      }
       localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profile));
+      toast.success(res?.message || 'Profile updated successfully!');
+      setTimeout(() => {
+        navigate('/');
+      }, 700);
     } catch (err) {
-      console.error('[Profile] Failed to save updates to storage:', err);
+      console.warn('[Profile] Backend update failed, saving locally:', err?.message);
+      try {
+        localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profile));
+      } catch {
+        // ignore
+      }
+      toast.success('Profile saved locally.');
+      setTimeout(() => {
+        navigate('/');
+      }, 700);
+    } finally {
+      setIsSubmitting(false);
     }
-
-    toast.success('Profile updated successfully!');
-    // Simulation: redirect back to dashboard after a short delay
-    setTimeout(() => {
-      navigate('/');
-    }, 800);
   };
 
   return (
@@ -306,9 +342,11 @@ const Profile = () => {
             </button>
             <button
               type="submit"
-              className="px-6 py-2.5 min-h-[44px] flex items-center justify-center text-xs font-bold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl shadow-lg shadow-blue-500/10 hover:shadow-blue-500/25 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
+              disabled={isSubmitting}
+              className="px-6 py-2.5 min-h-[44px] flex items-center justify-center gap-2 text-xs font-bold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 disabled:opacity-60 text-white rounded-xl shadow-lg shadow-blue-500/10 hover:shadow-blue-500/25 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
             >
-              Save Profile
+              {isSubmitting && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+              <span>{isSubmitting ? 'Saving...' : 'Save Profile'}</span>
             </button>
           </div>
         </form>

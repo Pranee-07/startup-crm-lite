@@ -36,7 +36,10 @@ export const protect = async (req, res, next) => {
 
   try {
     // Cryptographically verify token signature and expiration
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET || 'startup_crm_super_secret_jwt_key_2026_dev'
+    );
 
     // Fetch user from database excluding password hash
     const user = await User.findById(decoded.id).select('-password');

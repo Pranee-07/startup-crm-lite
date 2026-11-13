@@ -97,4 +97,12 @@ router.get('/profile', protect, getProfile);
 // 5. Update authenticated user profile (name or password)
 router.put('/profile', protect, validate(updateProfileValidation), updateProfile);
 
+// 6. Logout user endpoint
+router.post('/logout', (req, res) => {
+  return res.status(200).json({
+    success: true,
+    message: 'Logged out successfully'
+  });
+});
+
 export default router;

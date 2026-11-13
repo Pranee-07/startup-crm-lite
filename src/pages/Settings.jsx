@@ -21,7 +21,7 @@ import {
  */
 const Settings = () => {
   const navigate = useNavigate();
-  const { isLightMode, toggleTheme } = useTheme();
+  const { isLightMode, toggleTheme, setLightMode } = useTheme();
 
   // General settings state configuration
   const [general, setGeneral] = useState({
@@ -187,20 +187,26 @@ const Settings = () => {
                 </div>
                 
                 {/* Responsive toggle container */}
-                <button
-                  type="button"
-                  onClick={toggleTheme}
-                  className="flex items-center gap-2 p-1 bg-slate-900 light:bg-white border border-slate-800 light:border-slate-200 rounded-xl cursor-pointer"
+                <div
+                  className="flex items-center gap-1.5 p-1 bg-slate-900 light:bg-white border border-slate-800 light:border-slate-200 rounded-xl"
                 >
-                  <span className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all flex items-center gap-1.5 ${!isLightMode ? 'bg-slate-800 text-white shadow' : 'text-slate-500 hover:text-slate-950'}`}>
+                  <button
+                    type="button"
+                    onClick={() => setLightMode(false)}
+                    className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all flex items-center gap-1.5 cursor-pointer ${!isLightMode ? 'bg-slate-800 text-white shadow' : 'text-slate-500 hover:text-slate-950 light:hover:text-slate-900'}`}
+                  >
                     <Moon className="w-3 h-3" />
                     Dark
-                  </span>
-                  <span className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all flex items-center gap-1.5 ${isLightMode ? 'bg-slate-100 text-slate-850 shadow' : 'text-slate-400 hover:text-slate-100'}`}>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setLightMode(true)}
+                    className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all flex items-center gap-1.5 cursor-pointer ${isLightMode ? 'bg-slate-100 text-slate-850 shadow' : 'text-slate-400 hover:text-slate-100'}`}
+                  >
                     <Sun className="w-3 h-3" />
                     Light
-                  </span>
-                </button>
+                  </button>
+                </div>
               </div>
             </div>
 

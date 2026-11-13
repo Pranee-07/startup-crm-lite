@@ -1,20 +1,22 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.jsx'
-import { LeadProvider } from './context/LeadContext.jsx'
-import { ThemeProvider } from './context/ThemeContext.jsx'
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import './index.css';
+import App from './App.jsx';
+import { AuthProvider } from './context/AuthContext.jsx';
+import { LeadProvider } from './context/LeadContext.jsx';
+import { ThemeProvider } from './context/ThemeContext.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    {/* LeadProvider is the outermost data layer so any nested provider
-        or component can consume the leads store without restriction. */}
-    <LeadProvider>
-      {/* ThemeProvider sits inside LeadProvider; it can read leads if ever
-          needed for theme-aware logic, and supplies dark/light state globally. */}
-      <ThemeProvider>
-        <App />
-      </ThemeProvider>
-    </LeadProvider>
+    {/* AuthProvider is the top-level security layer managing JWT sessions */}
+    <AuthProvider>
+      {/* LeadProvider manages backend leads API data for authenticated users */}
+      <LeadProvider>
+        {/* ThemeProvider manages light/dark UI themes globally */}
+        <ThemeProvider>
+          <App />
+        </ThemeProvider>
+      </LeadProvider>
+    </AuthProvider>
   </StrictMode>,
-)
+);
