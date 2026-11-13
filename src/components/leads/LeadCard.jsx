@@ -69,10 +69,17 @@ const LeadCard = ({ lead, onEdit, onDelete }) => {
             <span className="text-slate-500 light:text-slate-400 italic">{phone}</span>
           )}
         </div>
-        <div className="flex items-center gap-2 text-slate-400 light:text-slate-500 text-[10px] border-t border-slate-850/40 light:border-slate-200 pt-2 font-medium">
-          <Globe className="w-3.5 h-3.5 text-slate-500 light:text-slate-400 shrink-0" />
-          <span>Source:</span>
-          <span className="text-slate-300 light:text-slate-700">{source}</span>
+        <div className="flex items-center justify-between text-slate-400 light:text-slate-500 text-[10px] border-t border-slate-850/40 light:border-slate-200 pt-2 font-medium">
+          <div className="flex items-center gap-1.5">
+            <Globe className="w-3.5 h-3.5 text-slate-500 light:text-slate-400 shrink-0" />
+            <span>Source:</span>
+            <span className="text-slate-300 light:text-slate-700">{source}</span>
+          </div>
+          <div>
+            <span className="font-bold text-emerald-400 light:text-emerald-600">
+              ${Number(lead.revenue !== undefined ? lead.revenue : lead.value || 0).toLocaleString()}
+            </span>
+          </div>
         </div>
       </div>
 

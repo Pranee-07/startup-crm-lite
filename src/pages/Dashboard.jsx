@@ -49,14 +49,28 @@ const Dashboard = () => {
     return leads.filter((l) => (l.status || l.stage) === 'New').length;
   }, [stats, leads]);
 
+  const totalRevenue = useMemo(() => {
+    return leads.reduce((sum, lead) => {
+      const rev = typeof lead.revenue === 'number'
+        ? lead.revenue
+        : typeof lead.revenue === 'string'
+        ? parseFloat(lead.revenue.replace(/[^0-9.-]+/g, '')) || 0
+        : typeof lead.value === 'number'
+        ? lead.value
+        : parseFloat(String(lead.value || 0).replace(/[^0-9.-]+/g, '')) || 0;
+      return sum + rev;
+    }, 0);
+  }, [leads]);
+
   const pipelineValue = useMemo(() => {
     return leads
       .filter((l) => (l.status || l.stage) !== 'Lost')
       .reduce((sum, lead) => {
-        const val = typeof lead.value === 'string'
-          ? parseFloat(lead.value.replace(/[^0-9.-]+/g, '')) || 0
-          : parseFloat(lead.value) || 0;
-        return sum + val;
+        const val = lead.revenue !== undefined ? lead.revenue : lead.value;
+        const numericVal = typeof val === 'string'
+          ? parseFloat(val.replace(/[^0-9.-]+/g, '')) || 0
+          : parseFloat(val) || 0;
+        return sum + numericVal;
       }, 0);
   }, [leads]);
 
@@ -162,14 +176,21 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Grid of Key Performance Indicators (KPIs) - Responsive: 1 col on mobile, 2 on tablet, 4 on desktop */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* Grid of Key Performance Indicators (KPIs) - Responsive: 1 col on mobile, 2 on tablet, 3/5 on desktop */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
         <StatsCard
           title="Total Leads"
           value={totalLeads.toLocaleString()}
           icon={Users}
           change={totalLeads > 0 ? 100 : 0}
           color="primary"
+        />
+        <StatsCard
+          title="Revenue"
+          value={`$${totalRevenue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
+          icon={DollarSign}
+          change={totalRevenue > 0 ? 12.5 : 0}
+          color="success"
         />
         <StatsCard
           title="Pipeline Value"
@@ -183,7 +204,7 @@ const Dashboard = () => {
           value={conversionRate}
           icon={TrendingUp}
           change={parseFloat(conversionRate) > 0 ? parseFloat(conversionRate) : 0}
-          color="success"
+          color="blue"
         />
         <StatsCard
           title="Avg Sales Cycle"

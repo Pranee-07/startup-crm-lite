@@ -37,6 +37,11 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
     company: initialData?.company || '',
     email: initialData?.email || '',
     phone: initialData?.phone || '',
+    revenue: initialData?.revenue !== undefined
+      ? initialData.revenue
+      : initialData?.value !== undefined
+      ? initialData.value
+      : '',
     status: initialData?.status || initialData?.stage || 'New',
     source: initialData?.source || 'Website',
   });
@@ -82,6 +87,12 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
       newErrors.email = 'Please enter a valid email address';
     }
 
+    if (formData.revenue === '' || formData.revenue === undefined || formData.revenue === null) {
+      newErrors.revenue = 'Revenue is required';
+    } else if (isNaN(Number(formData.revenue)) || Number(formData.revenue) < 0) {
+      newErrors.revenue = 'Please enter a valid non-negative revenue';
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -96,6 +107,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
     if (validateForm()) {
       onSubmit({
         ...formData,
+        revenue: Number(formData.revenue),
         id: initialData?.id, // include ID if editing
       });
     }
@@ -214,6 +226,34 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
             placeholder="+1 (555) 000-0000"
             className="w-full text-xs bg-slate-950 light:bg-white border border-slate-800 light:border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-slate-100 light:text-slate-900 placeholder-slate-600 light:placeholder-slate-400 rounded-xl px-4 py-3 min-h-[44px] focus:outline-none transition-all duration-200"
           />
+        </div>
+
+        {/* Revenue input */}
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="lead-revenue" className="text-xs font-semibold text-slate-400 light:text-slate-600 transition-colors duration-200">
+            Revenue ($) *
+          </label>
+          <input
+            id="lead-revenue"
+            type="number"
+            min="0"
+            step="any"
+            name="revenue"
+            value={formData.revenue}
+            onChange={handleChange}
+            placeholder="10000"
+            className={`w-full text-xs bg-slate-950 light:bg-white border rounded-xl px-4 py-3 min-h-[44px] text-slate-100 light:text-slate-900 placeholder-slate-600 light:placeholder-slate-400 focus:outline-none focus:ring-1 transition-all duration-200 ${
+              errors.revenue
+                ? 'border-red-500/50 light:border-red-500/40 focus:ring-red-500 focus:border-red-500'
+                : 'border-slate-800 light:border-slate-200 focus:ring-blue-500 focus:border-blue-500'
+            }`}
+          />
+          {errors.revenue && (
+            <span className="text-[10px] text-red-400 light:text-red-550 font-semibold flex items-center gap-1 mt-0.5 animate-pulse">
+              <AlertCircle className="w-3 h-3" />
+              {errors.revenue}
+            </span>
+          )}
         </div>
 
         {/* Status dropdown */}

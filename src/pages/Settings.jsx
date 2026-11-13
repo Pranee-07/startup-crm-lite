@@ -192,19 +192,19 @@ const Settings = () => {
                 >
                   <button
                     type="button"
-                    onClick={() => setLightMode(false)}
-                    className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all flex items-center gap-1.5 cursor-pointer ${!isLightMode ? 'bg-slate-800 text-white shadow' : 'text-slate-500 hover:text-slate-950 light:hover:text-slate-900'}`}
-                  >
-                    <Moon className="w-3 h-3" />
-                    Dark
-                  </button>
-                  <button
-                    type="button"
                     onClick={() => setLightMode(true)}
                     className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all flex items-center gap-1.5 cursor-pointer ${isLightMode ? 'bg-slate-100 text-slate-850 shadow' : 'text-slate-400 hover:text-slate-100'}`}
                   >
                     <Sun className="w-3 h-3" />
                     Light
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setLightMode(false)}
+                    className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all flex items-center gap-1.5 cursor-pointer ${!isLightMode ? 'bg-slate-800 text-white shadow' : 'text-slate-500 hover:text-slate-950 light:hover:text-slate-900'}`}
+                  >
+                    <Moon className="w-3 h-3" />
+                    Dark
                   </button>
                 </div>
               </div>

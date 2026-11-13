@@ -3,9 +3,9 @@ import { Sun, Moon } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 
 /**
- * LightModeToggle component provides a beautiful, animated toggle switch
- * with a Sun icon (active in Dark Mode) and a Moon icon (active in Light Mode).
- * It shows the current theme state text and triggers the global theme transition.
+ * LightModeToggle component provides an animated toggle switch.
+ * The Light Mode option/icon appears first (left), and Dark Mode option/icon appears next to it (right).
+ * Both modes work smoothly when clicked.
  *
  * @returns {React.JSX.Element}
  */
@@ -21,24 +21,24 @@ const LightModeToggle = () => {
         aria-label={`Switch to ${isLightMode ? 'Dark' : 'Light'} Mode`}
         className="relative flex items-center justify-between w-14 h-7 p-1 bg-slate-950 light:bg-slate-200 border border-slate-800 light:border-slate-350 rounded-full cursor-pointer focus:outline-none transition-colors duration-200 select-none group"
       >
-        {/* Sliding Indicator Ball */}
+        {/* Sliding Indicator Ball: on Position 1 (left) in Light Mode, on Position 2 (right) in Dark Mode */}
         <span
           className={`absolute top-0.5 bottom-0.5 left-0.5 w-5.5 h-5.5 rounded-full bg-blue-600 light:bg-indigo-600 transition-all duration-200 shadow-md ${
-            isLightMode ? 'translate-x-7' : 'translate-x-0'
+            isLightMode ? 'translate-x-0' : 'translate-x-7'
           }`}
         />
         
-        {/* Sun Icon (representing dark mode toggle status) */}
+        {/* Sun Icon (Position 1: First - Light Mode) */}
         <Sun 
           className={`w-3.5 h-3.5 z-10 transition-colors duration-200 ml-1 ${
-            !isLightMode ? 'text-white' : 'text-slate-400 group-hover:text-slate-600'
+            isLightMode ? 'text-white' : 'text-slate-400 group-hover:text-slate-300'
           }`} 
         />
         
-        {/* Moon Icon (representing light mode toggle status) */}
+        {/* Moon Icon (Position 2: Next - Dark Mode) */}
         <Moon 
           className={`w-3.5 h-3.5 z-10 transition-colors duration-200 mr-1 ${
-            isLightMode ? 'text-white' : 'text-slate-500 group-hover:text-slate-400'
+            !isLightMode ? 'text-white' : 'text-slate-500 group-hover:text-slate-600'
           }`} 
         />
       </button>

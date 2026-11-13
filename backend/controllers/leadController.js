@@ -127,7 +127,7 @@ export const getLeads = async (req, res, next) => {
  */
 export const createLead = async (req, res, next) => {
   try {
-    const { name, company, email, phone, status, source, notes } = req.body;
+    const { name, company, email, phone, status, source, notes, revenue } = req.body;
 
     if (process.env.NODE_ENV === 'development') {
       console.log(`[LeadController:createLead] User ${req.user._id} creating lead for "${company}"`);
@@ -142,6 +142,7 @@ export const createLead = async (req, res, next) => {
       status: status || 'New',
       source: source || 'Website',
       notes,
+      revenue: revenue !== undefined ? Number(revenue) : 0,
       owner: req.user._id
     });
 
@@ -229,6 +230,9 @@ export const updateLead = async (req, res, next) => {
     // Prevent client from mutating ownership
     const updateData = { ...req.body };
     delete updateData.owner;
+    if (updateData.revenue !== undefined) {
+      updateData.revenue = Number(updateData.revenue);
+    }
 
     // Atomic update with schema validation
     const updatedLead = await Lead.findOneAndUpdate(
@@ -415,12 +419,29 @@ export const getLeadStats = async (req, res, next) => {
       ? Number(((wonLeads / totalLeads) * 100).toFixed(1))
       : 0;
 
+    // Aggregate total revenue across all leads owned by user
+    const revenueAggregation = await Lead.aggregate([
+      {
+        $match: {
+          owner: req.user._id
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: { $ifNull: ['$revenue', 0] } }
+        }
+      }
+    ]);
+    const totalRevenue = revenueAggregation.length > 0 ? revenueAggregation[0].totalRevenue : 0;
+
     const stats = {
       totalLeads,
       wonLeads,
       lostLeads,
       conversionRate,
-      statusBreakdown
+      statusBreakdown,
+      totalRevenue
     };
 
     return successResponse(res, stats, 'Lead statistics fetched successfully', 200);

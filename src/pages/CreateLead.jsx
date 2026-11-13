@@ -29,6 +29,7 @@ const CreateLead = () => {
         phone: formData.phone,
         status: formData.status,
         source: formData.source,
+        revenue: Number(formData.revenue),
       });
       navigate('/leads');
     } catch {

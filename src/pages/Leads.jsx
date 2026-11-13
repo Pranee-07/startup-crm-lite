@@ -125,6 +125,7 @@ const Leads = () => {
           phone: formData.phone,
           status: formData.status,
           source: formData.source,
+          revenue: Number(formData.revenue),
         });
       } else {
         // Create mode — addLead saves to MongoDB Atlas
@@ -135,6 +136,7 @@ const Leads = () => {
           phone: formData.phone,
           status: formData.status,
           source: formData.source,
+          revenue: Number(formData.revenue),
         });
       }
       handleCloseModal();

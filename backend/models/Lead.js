@@ -122,6 +122,17 @@ const leadSchema = new mongoose.Schema(
     },
 
     /**
+     * Expected revenue or deal value in currency units.
+     * Mandatory numeric value; must be non-negative.
+     */
+    revenue: {
+      type: Number,
+      required: [true, 'Revenue is required'],
+      min: [0, 'Revenue cannot be negative'],
+      default: 0
+    },
+
+    /**
      * Foreign key reference to the User model who owns and manages this lead.
      * Enforces referential relationship and enables user-scoped data filtering.
      */
@@ -152,6 +163,14 @@ leadSchema.virtual('age').get(function () {
   const diffInMilliseconds = Date.now() - new Date(this.createdAt).getTime();
   const millisecondsInOneDay = 1000 * 60 * 60 * 24;
   return Math.floor(diffInMilliseconds / millisecondsInOneDay);
+});
+
+/**
+ * Virtual property: value
+ * Mirror alias for revenue to provide complete backward compatibility with analytics helpers.
+ */
+leadSchema.virtual('value').get(function () {
+  return this.revenue !== undefined ? this.revenue : 0;
 });
 
 /**

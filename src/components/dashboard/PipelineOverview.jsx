@@ -53,10 +53,10 @@ const PipelineOverview = ({ leads = [] }) => {
     const valueSum = leads
       .filter((lead) => isStageMatch(lead, stage.key))
       .reduce((sum, lead) => {
-        // Parse numerical value from string format e.g., "$38,200" or 38200
-        const numericVal = typeof lead.value === 'string'
-          ? parseFloat(lead.value.replace(/[^0-9.-]+/g, '')) || 0
-          : parseFloat(lead.value) || 0;
+        const rawVal = lead.revenue !== undefined ? lead.revenue : lead.value;
+        const numericVal = typeof rawVal === 'string'
+          ? parseFloat(rawVal.replace(/[^0-9.-]+/g, '')) || 0
+          : parseFloat(rawVal) || 0;
         return sum + numericVal;
       }, 0);
 

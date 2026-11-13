@@ -13,6 +13,11 @@ import { useAuth } from './AuthContext';
 const normalizeLead = (lead) => {
   if (!lead) return lead;
   const id = lead.id || lead._id;
+  const rev = lead.revenue !== undefined
+    ? Number(lead.revenue)
+    : lead.value !== undefined
+    ? Number(lead.value)
+    : 0;
   return {
     ...lead,
     id,
@@ -21,6 +26,8 @@ const normalizeLead = (lead) => {
     name: lead.name || lead.contactName || '',
     stage: lead.status || lead.stage || 'New',
     status: lead.status || lead.stage || 'New',
+    revenue: rev,
+    value: rev,
     dateAdded: lead.createdAt || lead.dateAdded || new Date().toISOString(),
     createdAt: lead.createdAt || lead.dateAdded || new Date().toISOString(),
   };

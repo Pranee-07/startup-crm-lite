@@ -64,6 +64,7 @@ const LeadTable = ({ leads = [], onEdit, onDelete }) => {
           <tr className="border-b border-slate-800 light:border-slate-200 text-[10px] font-bold uppercase tracking-wider text-slate-500 light:text-slate-400 bg-slate-950/40 light:bg-slate-50">
             <th className="py-4 px-6 font-semibold">Name</th>
             <th className="py-4 px-6 font-semibold">Company</th>
+            <th className="py-4 px-6 font-semibold">Revenue</th>
             <th className="py-4 px-6 font-semibold">Status</th>
             <th className="py-4 px-6 font-semibold hidden lg:table-cell">Email</th>
             <th className="py-4 px-6 font-semibold hidden lg:table-cell">Source</th>
@@ -88,6 +89,11 @@ const LeadTable = ({ leads = [], onEdit, onDelete }) => {
 
                 {/* Company Name */}
                 <td className="py-4 px-6 text-slate-400 light:text-slate-600 font-medium">{lead.company}</td>
+
+                {/* Revenue */}
+                <td className="py-4 px-6 font-bold text-slate-200 light:text-slate-800">
+                  ${Number(lead.revenue !== undefined ? lead.revenue : lead.value || 0).toLocaleString()}
+                </td>
 
                 {/* Status Badge */}
                 <td className="py-4 px-6">

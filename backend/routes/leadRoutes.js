@@ -61,6 +61,13 @@ const createLeadValidation = [
   body('phone')
     .optional()
     .trim(),
+  body('revenue')
+    .notEmpty()
+    .withMessage('Revenue is required')
+    .isNumeric()
+    .withMessage('Revenue must be a valid number')
+    .custom((val) => Number(val) >= 0)
+    .withMessage('Revenue cannot be negative'),
   body('notes')
     .optional()
     .trim()
@@ -103,6 +110,12 @@ const updateLeadValidation = [
   body('phone')
     .optional()
     .trim(),
+  body('revenue')
+    .optional()
+    .isNumeric()
+    .withMessage('Revenue must be a valid number')
+    .custom((val) => Number(val) >= 0)
+    .withMessage('Revenue cannot be negative'),
   body('notes')
     .optional()
     .trim()
